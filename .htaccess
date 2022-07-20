@@ -1,0 +1,10 @@
+<IfModule mod_rewrite.c>
+
+  RewriteEngine On
+  RewriteOptions inherit
+  AddDefaultCharset UTF-8
+
+  # Protect vendor directory from direct access
+  RewriteRule "^vendor/" - [L,R=404]
+
+</IfModule>

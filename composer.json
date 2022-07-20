@@ -1,0 +1,33 @@
+{
+    "name": "teppokoivula/search-engine-file-indexer",
+    "type": "pw-module",
+    "description": "Optional and experimental file indexing add-on for the ProcessWire CMS/CMF module SearchEngine",
+    "keywords": [
+        "module",
+        "processwire"
+    ],
+    "license": "MPL-2.0",
+    "authors": [
+        {
+            "name": "Teppo Koivula",
+            "homepage": "https://github.com/teppokoivula",
+            "email": "teppo.koivula@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.4",
+        "wireframe-framework/processwire-composer-installer": "^1.0.0",
+        "phpoffice/phpword": "^0.18.3",
+        "smalot/pdfparser": "^2.2",
+        "spatie/pdf-to-text": "^1.52",
+        "symfony/process": "^5.0",
+        "phpoffice/phpspreadsheet": "^1.21.0",
+	"psr/simple-cache": "^1.0"
+    },
+    "config": {
+        "allow-plugins": {
+            "hari/pw-module": true,
+            "wireframe-framework/processwire-composer-installer": true
+        }
+    }
+}
