@@ -46,7 +46,7 @@ class SearchEngineFileIndexer extends WireData implements Module, ConfigurableMo
             'title' => 'SearchEngine File Indexer',
             'summary' => 'SearchEngine add-on for indexing files (experimental)',
             'icon' => 'file-text-o',
-            'version' => '0.0.1',
+            'version' => '0.0.3',
             'requires' => 'PHP>=7.4, ProcessWire>=3.0.164, SearchEngine>=0.33.0',
             'autoload' => true,
         ];
@@ -74,12 +74,16 @@ class SearchEngineFileIndexer extends WireData implements Module, ConfigurableMo
      * @param HookEvent $event
      */
     protected function pagefileIndexValueHook(HookEvent $event) {
-        $indexed_file = $this->indexFile($event->arguments[0]);
-        if ($indexed_file) {
-            $event->return = implode(' ... ', array_filter([
-                $event->return,
-                $indexed_file,
-            ]));
+        $file = $event->arguments[0];
+        $indexed_file = $this->indexFile($file);
+        // null means the file is not a supported type or could not be read.
+        // An empty string is still an indexed file: store the path and page, and flag is_file.
+        if ($indexed_file === null) {
+            return;
+        }
+        if ($file instanceof Pagefile) {
+            $file->set('_se_is_file', 1);
+            $file->set('_se_file_text', $indexed_file);
         }
     }
 
@@ -106,10 +110,12 @@ class SearchEngineFileIndexer extends WireData implements Module, ConfigurableMo
         // Attempt to read file data using file indexer
         try {
             $text = $file_indexer->getText($file);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
+            $indexer_name = get_class($file_indexer);
+            $indexer_name = ($pos = strrpos($indexer_name, '\\')) !== false ? substr($indexer_name, $pos + 1) : $indexer_name;
             $this->log->error(sprintf(
                 'SearchEngineFileIndexer::%s error for file at %s: %s',
-                $file_indexer['method'],
+                $indexer_name,
                 $file_info['filename'],
                 $e->getMessage()
             ));
